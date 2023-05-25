@@ -1,3 +1,4 @@
+# Monocular Visual Odometry using Classical Computer Vision Algorithms
 This is an OpenCV 3.0 based implementation of a monocular visual odometry algorithm.
 
 ## Algorithm
@@ -15,7 +16,7 @@ so the scale informaion is extracted from the KITTI dataset ground truth files.
 ## Requirements
 OpenCV 3.0
 
-## How to compile?
+## Compilation instructions
 Provided with this repo is a CMakeLists.txt file, which you can use to directly compile the code as follows:
 ```bash
 mkdir build
@@ -24,7 +25,7 @@ cmake ..
 make
 ```
 
-## How to run? 
+## Run instructions
 After compilation, in the build directly, type the following:
 ```bash
 ./vo
