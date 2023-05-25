@@ -1,3 +1,8 @@
+/*
+Project : Monocular Visual Odometry
+Description : This project is a classical computer vision based implementation of a monocular visual odometry. 
+Contributor: Krutarth Ambarish Trivedi (ktrivedi@wpi.edu)
+*/
 #include "vo_features.h"
 
 using namespace cv;
@@ -6,47 +11,13 @@ using namespace std;
 #define MAX_FRAME 1000
 #define MIN_NUM_FEAT 2000
 
-// IMP: Change the file directories (4 places) according to where your dataset is saved before running!
+// NB: Change the file directories (4 places) according to where your dataset is saved before running!
 
-double getAbsoluteScale(int frame_id, int sequence_id, double z_cal)	{
-  
-  string line;
-  int i = 0;
-  ifstream myfile ("/Users/krutarthtrivedi/Documents/Portfolio/Monocular-Visual-Odometry/Datasets/KITTI_VO/00.txt");
-  double x =0, y=0, z = 0;
-  double x_prev, y_prev, z_prev;
-  if (myfile.is_open())
-  {
-    while (( getline (myfile,line) ) && (i<=frame_id))
-    {
-      z_prev = z;
-      x_prev = x;
-      y_prev = y;
-      std::istringstream in(line);
-      //cout << line << '\n';
-      for (int j=0; j<12; j++)  {
-        in >> z ;
-        if (j==7) y=z;
-        if (j==3)  x=z;
-      }
-      
-      i++;
-    }
-    myfile.close();
-  }
+//Function Declaration
+double getAbsoluteScale(int frame_id, int sequence_id, double z_cal);
 
-  else {
-    cout << "Unable to open file";
-    return 0;
-  }
-
-  return sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)) ;
-
-}
-
-
-int main( int argc, char** argv )	{
-
+int main( int argc, char** argv )	
+{
   Mat img_1, img_2;
   Mat R_f, t_f; //the final rotation and tranlation vectors containing the 
 
@@ -73,7 +44,7 @@ int main( int argc, char** argv )	{
     std::cout<< " --(!) Error reading images " << std::endl; return -1;
   }
 
-  // we work with grayscale images
+  // let's work with grayscale images
   cvtColor(img_1_c, img_1, COLOR_BGR2GRAY);
   cvtColor(img_2_c, img_2, COLOR_BGR2GRAY);
 
@@ -83,10 +54,11 @@ int main( int argc, char** argv )	{
   vector<uchar> status;
   featureTracking(img_1,img_2,points1,points2, status); //track those features to img_2
 
-  //TODO: add a fucntion to load these values directly from KITTI's calib files
-  // WARNING: different sequences in the KITTI VO dataset have different intrinsic/extrinsic parameters
+  //@to-do: add a fucntion to load these values directly from KITTI's calib files
+  //WARNING: different sequences in the KITTI VO dataset have different intrinsic/extrinsic parameters
   double focal = 718.8560;
   cv::Point2d pp(607.1928, 185.2157);
+
   //recovering the pose and the essential matrix
   Mat E, R, t, mask;
   E = findEssentialMat(points2, points1, focal, pp, RANSAC, 0.999, 1.0, mask);
@@ -104,14 +76,15 @@ int main( int argc, char** argv )	{
 
   clock_t begin = clock();
 
-  namedWindow( "Road facing camera", WINDOW_AUTOSIZE );// Create a window for display.
-  namedWindow( "Trajectory", WINDOW_AUTOSIZE );// Create a window for display.
+  namedWindow( "Road facing camera", WINDOW_AUTOSIZE );   // Create a window for camera frmae display.
+  namedWindow( "Trajectory", WINDOW_AUTOSIZE );           // Create a window for trajectory display.
 
   Mat traj = Mat::zeros(600, 600, CV_8UC3);
 
-  for(int numFrame=2; numFrame < MAX_FRAME; numFrame++)	{
+  for(int numFrame=2; numFrame < MAX_FRAME; numFrame++)	
+  {
   	sprintf(filename, "/Users/krutarthtrivedi/Documents/Portfolio/Monocular-Visual-Odometry/Datasets/KITTI_VO/00/image_2/%06d.png", numFrame);
-    //cout << numFrame << endl;
+    
   	Mat currImage_c = imread(filename);
   	cvtColor(currImage_c, currImage, COLOR_BGR2GRAY);
   	vector<uchar> status;
@@ -122,8 +95,8 @@ int main( int argc, char** argv )	{
 
     Mat prevPts(2,prevFeatures.size(), CV_64F), currPts(2,currFeatures.size(), CV_64F);
 
-
-   for(int i=0;i<prevFeatures.size();i++)	{   //this (x,y) combination makes sense as observed from the source code of triangulatePoints on GitHub
+   for(int i=0;i<prevFeatures.size();i++)	
+   {   
   		prevPts.at<double>(0,i) = prevFeatures.at(i).x;
   		prevPts.at<double>(1,i) = prevFeatures.at(i).y;
 
@@ -133,8 +106,6 @@ int main( int argc, char** argv )	{
 
   	scale = getAbsoluteScale(numFrame, 0, t.at<double>(2));
 
-    //cout << "Scale is " << scale << endl;
-
     if ((scale>0.1)&&(t.at<double>(2) > t.at<double>(0)) && (t.at<double>(2) > t.at<double>(1))) {
 
       t_f = t_f + scale*(R_f*t);
@@ -142,17 +113,16 @@ int main( int argc, char** argv )	{
 
     }
   	
-    else {
-     //cout << "scale below 0.1, or incorrect translation" << endl;
+    else 
+    {
+      cout << "scale below 0.1, or incorrect translation" << endl;
     }
     
-   // lines for printing results
-   // myfile << t_f.at<double>(0) << " " << t_f.at<double>(1) << " " << t_f.at<double>(2) << endl;
-
-  // a redetection is triggered in case the number of feautres being trakced go below a particular threshold
- 	  if (prevFeatures.size() < MIN_NUM_FEAT)	{
-      //cout << "Number of tracked features reduced to " << prevFeatures.size() << endl;
-      //cout << "trigerring redection" << endl;
+    // Visual BoW: A redetection is triggered in case the number of feautres being trakced go below a particular threshold
+ 	  if (prevFeatures.size() < MIN_NUM_FEAT)	
+    {
+      cout << "Number of tracked features reduced to " << prevFeatures.size() << endl;
+      cout << "trigerring redection" << endl;
  		  featureDetection(prevImage, prevFeatures);
       featureTracking(prevImage,currImage,prevFeatures,currFeatures, status);
 
@@ -173,15 +143,54 @@ int main( int argc, char** argv )	{
     imshow( "Trajectory", traj );
 
     waitKey(1);
-
   }
 
   clock_t end = clock();
   double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   cout << "Total time taken: " << elapsed_secs << "s" << endl;
-
-  //cout << R_f << endl;
-  //cout << t_f << endl;
-
   return 0;
+}
+
+/*  
+@brief read the absoulte scale data
+@param frame_id Frame ID of the current image frame
+@param sequence_id  Sequence ID of the current sequence from the VO dataset
+@param z_cal calculated translation between frames
+@return calculated absolute scale 
+*/
+double getAbsoluteScale(int frame_id, int sequence_id, double z_cal)	
+{  
+  string line;
+  int i = 0;
+  ifstream myfile ("/Users/krutarthtrivedi/Documents/Portfolio/Monocular-Visual-Odometry/Datasets/KITTI_VO/00.txt");
+  double x =0, y=0, z = 0;
+  double x_prev, y_prev, z_prev;
+
+  if (myfile.is_open())
+  {
+    while (( getline (myfile,line) ) && (i<=frame_id))
+    {
+      z_prev = z;
+      x_prev = x;
+      y_prev = y;
+      std::istringstream in(line);
+      
+      for (int j=0; j<12; j++)  {
+        in >> z ;
+        if (j==7) y=z;
+        if (j==3)  x=z;
+      }
+      
+      i++;
+    }
+    myfile.close();
+  }
+
+  else 
+  {
+    cout << "Unable to open file";
+    return 0;
+  }
+
+  return sqrt((x-x_prev)*(x-x_prev) + (y-y_prev)*(y-y_prev) + (z-z_prev)*(z-z_prev)) ;
 }
