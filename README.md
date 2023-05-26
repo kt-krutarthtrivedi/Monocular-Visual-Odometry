@@ -3,7 +3,7 @@ This is an OpenCV 3.0 based implementation of a monocular visual odometry algori
 
 ## Algorithm
 Uses Nister's Five Point Algorithm for Essential Matrix estimation, and FAST features, with a KLT tracker.
-More details are available [here as a report](https://drive.google.com/file/d/1WHl7R2p9dTz9Sk0ZhyWailfwr-hr6_37/view?usp=drive_link)
+More details are available [here as a report](https://github.com/kt-krutarthtrivedi/Monocular-Visual-Odometry/blob/main/media/Report.pdf)
 
 Note that this project is not yet capable of doing reliable relative scale estimation, 
 so the scale informaion is extracted from the KITTI dataset ground truth files.
