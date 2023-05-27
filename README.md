@@ -10,7 +10,11 @@ so the scale informaion is extracted from the KITTI dataset ground truth files.
 
 ## Demo Video
 
-[![Demo video](http://share.gifyoutube.com/Ke1ope.gif)](http://www.youtube.com/watch?v=homos4vd_Zs)
+
+
+https://github.com/kt-krutarthtrivedi/Monocular-Visual-Odometry/assets/134632027/978f40a9-b2e8-41f0-b2c9-e7c1ba09e33d
+
+
 
 
 ## Requirements
@@ -36,4 +40,5 @@ or else the sequences from [KITTI's Visual Odometry Dataset](http://www.cvlibs.n
 In order to run this algorithm on your own data, you must modify the intrinsic calibration parameters in the code.
 
 ## Performance
-![Results on the KITTI VO Benchmark](http://avisingh599.github.io/images/visodo/2K.png)
+![results](https://github.com/kt-krutarthtrivedi/Monocular-Visual-Odometry/assets/134632027/051845dc-f1bf-4d74-9375-b36fff5886ff)
+
