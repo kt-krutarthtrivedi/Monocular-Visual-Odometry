@@ -17,9 +17,6 @@ https://github.com/kt-krutarthtrivedi/Monocular-Visual-Odometry/assets/134632027
 
 
 
-## Requirements
-OpenCV 3.0
-
 ## Compilation instructions
 Provided with this repo is a CMakeLists.txt file, which you can use to directly compile the code as follows:
 ```bash
